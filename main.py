@@ -7,6 +7,7 @@ class ITNode :
 		self.leftChild = None
 		self.rightChild = None
 
+
 class IntervalTree :
 	def __init__(self, t = None) :
 		self.root = t
@@ -30,6 +31,7 @@ class IntervalTree :
 					x.parent=root
 				else:
 					self.insert(root.rightChild,x)
+
 		if x.max < x.high :
 			x.max = x.high
 			self.updateMax(x)
@@ -58,6 +60,7 @@ class IntervalTree :
 		return self.overlapSearch(root.rightChild, i)
 
 
+
 	def inorder(self,root) :
 		if root == None :
 			return root
@@ -65,6 +68,7 @@ class IntervalTree :
 		self.inorder(root.leftChild)
 		print("[" + str(root.low) + ", " + str(root.high) + "]" + "max = " + str(root.max))
 		self.inorder(root.rightChild)
+
 
 	def preorder(self,root) :
 		if root == None :
