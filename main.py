@@ -4,8 +4,9 @@ class ITNode :
 		self.low = a
 		self.high = b
 		self.max = 0
-		self.left = None
-		self.right = None
+		self.leftChild = None
+		self.rightChild = None
+
 
 class IntervalTree :
 	def __init__(self, t = None) :
@@ -19,17 +20,17 @@ class IntervalTree :
 			l = root.low
 
 			if x.low < l :
-				if root.left==None:
-					root.left=x
+				if root.leftChild==None:
+					root.leftChild=x
 					x.parent=root
 				else:
-					self.insert(root.left,x)
+					self.insert(root.leftChild,x)
 			else :
-				if root.right==None:
-					root.right=x
+				if root.rightChild==None:
+					root.rightChild=x
 					x.parent=root
 				else:
-					self.insert(root.right,x)
+					self.insert(root.rightChild,x)
 
 		if x.max < x.high :
 			x.max = x.high
@@ -53,37 +54,36 @@ class IntervalTree :
 			return None
 		if self.doOverlap(root.i, i) :
 			return root.i
-		if root.left != None and root.left.max >= i.low :
-			return self.overlapSearch(root.left, i)
+		if root.leftChild != None and root.leftChild.max >= i.low :
+			return self.overlapSearch(root.leftChild, i)
 
-		return self.overlapSearch(root.right, i)
+		return self.overlapSearch(root.rightChild, i)
+
 
 
 	def inorder(self,root) :
 		if root == None :
 			return root
 
-		self.inorder(root.left)
+		self.inorder(root.leftChild)
 		print("[" + str(root.low) + ", " + str(root.high) + "]" + "max = " + str(root.max))
-		self.inorder(root.right)
+		self.inorder(root.rightChild)
+
 
 	def preorder(self,root) :
 		if root == None :
 			return root
 
 		print("[" + str(root.low) + ", " + str(root.high) + "]" + "max = " + str(root.max))
-		self.preorder(root.left)
-		self.preorder(root.right)
+		self.preorder(root.leftChild)
+		self.preorder(root.rightChild)
 
 
 def main() :
-	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40]]
-	a = []
+	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40],[4,10],[2,5] ]
 	rat = IntervalTree()
 	for j in e :
-		a.append(ITNode(j[0], j[1]))
-	for i in a:
-		rat.insert(rat.root,i)
+		rat.insert(rat.root,ITNode(j[0], j[1]))
 	rat.inorder(rat.root)
 	print(rat.root.low,rat.root.high)
 	rat.preorder(rat.root)
