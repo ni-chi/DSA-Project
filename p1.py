@@ -14,41 +14,25 @@ class IntervalTree:
 		self.root=None
 
 
-	def search(self,k,x):
+	def search(self,x,i):
 		if self.root==None or x==None:
 			return None
-		if k==x.key:
+		if i[0]==x.low and i[1]==x.high:
 			return x
-		if k<x.key:
-			return self.search(k,x.leftChild)
+		if i[0]<x.low:
+			return self.search(x.leftChild,i)
 		else:
-			return self.search(k,x.rightChild)
+			return self.search(x.rightChild,i)
 
-	def minimum(self,x):
-		while x.leftChild!=None:
-			x=x.leftChild
-		return x
 
 	def maximum(self,x):
 		while x.rightChild!=None:
 			x=x.rightChild
 		return x
 
-	def successor(self,k):
-		x=self.search(k,self.root)
-		if x.rightChild!=None:
-			return self.minimum(x.rightChild)
-		y=x.parent
-		while y!=None and x!=y.leftChild:
-			x=y
-			y=y.parent
-		if y==None:
-			return None
-		else:
-			return y
-
-	def predecessor(self,k):
-		x=self.search(k,self.root)
+	
+	def predecessor(self,i):
+		x=self.search(self.root,i)
 		if x==None:
 			return None
 		if x.leftChild!=None:
@@ -61,6 +45,22 @@ class IntervalTree:
 			return None
 		else:
 			return y
+
+	def doOverlap(self,i1,i2) :
+		if i1[0] <= i2[1] and i2[0] <=i1[1] :
+			return True
+		return False
+
+
+	def overlapSearch(self,root, i) :
+		if root == None :
+			return None
+		if self.doOverlap([root.low,root.high],i) :
+			return [root.low,root.high]
+		if root.leftChild != None and root.leftChild.max >= i[0] :
+			return self.overlapSearch(root.leftChild, i)
+
+		return self.overlapSearch(root.rightChild,i)
 
 	def height(self,z):
 		hl=hr=0
@@ -79,11 +79,21 @@ class IntervalTree:
 			return hr+1
 
 	def updateMax(self,x):
-		p=x.parent
-		while p!=None:
-			if p.max<x.max:
-				p.max=x.max
-			p=p.parent
+		a=0
+		b=0
+		if x.leftChild!=None:
+			self.updateMax(x.leftChild)
+			a=x.leftChild.max
+		if x.rightChild!=None:
+			self.updateMax(x.rightChild)
+			b=x.rightChild.max
+		if a>b:
+			x.max=a
+		else:
+			x.max=b
+		if x.high>x.max:
+			x.max=x.high
+
 
 	def insert(self,root, x=None) :
 		if self.root == None :
@@ -100,14 +110,14 @@ class IntervalTree:
 					self.insert(root.leftChild,x)
 			else :
 				if root.rightChild==None:
-					root.righChildt=x
+					root.rightChild=x
 					x.parent=root
 				else:
 					self.insert(root.rightChild,x)
-		if x.max < x.high :
-			x.max = x.high
-			self.updateMax(x)
+
 		self.compare(x)
+		
+		
 		
 		
 	def compare(self,z):
@@ -149,8 +159,8 @@ class IntervalTree:
 				
 		
 
-	def delete(self,k):
-		x=self.search(k,self.root)
+	def delete(self,i):
+		x=self.search(self.root,i)
 		if x.leftChild==None and x.rightChild==None:
 			y=x.parent
 			z=y
@@ -172,11 +182,13 @@ class IntervalTree:
 					x.parent.rightChild=x.leftChild
 				x.leftChild.parent=x.parent
 			else:
-				y=self.predecessor(x.key)
-				self.delete(y.key)
-				x.key=y.key
+				y=self.predecessor([x.low,x.high])
+				self.delete([y.low,y.high])
+				x.low=y.low
+				x.high=y.high
 			z=x
 		self.compare(z)
+		self.updateMax(self.root)
 
 	def inorder(self,root) :
 		if root == None :
@@ -225,13 +237,20 @@ def rotateright(y,z):
 
 	
 def main():
-	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40],[4,10],[2,5] ]
+	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40],[4,10],[2,6]]
 	rat = IntervalTree()
 	for j in e :
 		rat.insert(rat.root,ITNode(j[0], j[1]))
+	rat.updateMax(rat.root)
 	rat.inorder(rat.root)
 	print(rat.root.low,rat.root.high)
 	rat.preorder(rat.root)
+	print(rat.overlapSearch(rat.root,[6,9]))
+	rat.delete([10,30])
+	rat.inorder(rat.root)
+	print(rat.root.low,rat.root.high)
+	rat.preorder(rat.root)
+
 
 
 main()

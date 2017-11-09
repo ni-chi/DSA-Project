@@ -43,8 +43,8 @@ class IntervalTree :
 				p.max=x.max
 			p=p.parent
 
-	def doOverlap(self,i1, i2) :
-		if i1.low <= i2.high and i2.low <=i1.high :
+	def doOverlap(self,i1,i2) :
+		if i1[0] <= i2[1] and i2[0] <=i1[1] :
 			return True
 		return False
 
@@ -52,12 +52,12 @@ class IntervalTree :
 	def overlapSearch(self,root, i) :
 		if root == None :
 			return None
-		if self.doOverlap(root.i, i) :
-			return root.i
-		if root.leftChild != None and root.leftChild.max >= i.low :
+		if self.doOverlap([root.low,root.high],i) :
+			return [root.low,root.high]
+		if root.leftChild != None and root.leftChild.max >= i[0] :
 			return self.overlapSearch(root.leftChild, i)
 
-		return self.overlapSearch(root.rightChild, i)
+		return self.overlapSearch(root.rightChild,i)
 
 
 
@@ -80,13 +80,14 @@ class IntervalTree :
 
 
 def main() :
-	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40],[4,10],[2,5] ]
+	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40]]
 	rat = IntervalTree()
 	for j in e :
 		rat.insert(rat.root,ITNode(j[0], j[1]))
 	rat.inorder(rat.root)
 	print(rat.root.low,rat.root.high)
 	rat.preorder(rat.root)
+	print(rat.overlapSearch(rat.root,[6,7]))
 
 if __name__ == '__main__':
 	main()
