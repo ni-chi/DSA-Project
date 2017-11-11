@@ -131,13 +131,13 @@ class IntervalTree:
 				h1=self.height(y.leftChild)
 				h2=self.height(y.rightChild)
 				if h1>=h2:							#Case 1
-					rotateright(y,z)
+					self.rotateright(y,z)
 					z=y.parent
 
 				else:								#Case 3
 					x=y.rightChild
-					rotateleft(x,y)
-					rotateright(x,z)
+					self.rotateleft(x,y)
+					self.rotateright(x,z)
 					z=x.parent
 
 			else:
@@ -145,18 +145,43 @@ class IntervalTree:
 				h1=self.height(y.leftChild)
 				h2=self.height(y.rightChild)
 				if h1<=h2:							#Case 2
-					rotateleft(y,z)
+					self.rotateleft(y,z)
 					z=y.parent
 
 				else:								#Case 4
 					x=y.leftChild
-					rotateright(x,y)
-					rotateleft(x,z)
+					self.rotateright(x,y)
+					self.rotateleft(x,z)
 					z=x.parent
 		while self.root.parent!=None:
 			self.root=self.root.parent
 			self.compare(z)
 				
+	def rotateleft(self,y,z):
+		z.rightChild=y.leftChild
+		if y.leftChild!=None:
+			y.leftChild.parent=z
+		y.leftChild=z
+		y.parent=z.parent
+		if z.parent!=None:
+			if z.parent.rightChild==z:
+				z.parent.rightChild=y
+			else:
+				z.parent.leftChild=y
+		z.parent=y
+
+	def rotateright(self,y,z):
+		z.leftChild=y.rightChild
+		if y.rightChild!=None:
+			y.rightChild.parent=z
+		y.rightChild=z
+		y.parent=z.parent
+		if z.parent!=None:
+			if z.parent.rightChild==z:
+				z.parent.rightChild=y
+			else:
+				z.parent.leftChild=y
+		z.parent=y
 		
 
 	def delete(self,i):
@@ -209,31 +234,7 @@ class IntervalTree:
 
 
 	
-def rotateleft(y,z):
-	z.rightChild=y.leftChild
-	if y.leftChild!=None:
-		y.leftChild.parent=z
-	y.leftChild=z
-	y.parent=z.parent
-	if z.parent!=None:
-		if z.parent.rightChild==z:
-			z.parent.rightChild=y
-		else:
-			z.parent.leftChild=y
-	z.parent=y
 
-def rotateright(y,z):
-	z.leftChild=y.rightChild
-	if y.rightChild!=None:
-		y.rightChild.parent=z
-	y.rightChild=z
-	y.parent=z.parent
-	if z.parent!=None:
-		if z.parent.rightChild==z:
-			z.parent.rightChild=y
-		else:
-			z.parent.leftChild=y
-	z.parent=y
 
 	
 def main():
@@ -245,11 +246,8 @@ def main():
 	rat.inorder(rat.root)
 	print(rat.root.low,rat.root.high)
 	rat.preorder(rat.root)
-	print(rat.overlapSearch(rat.root,[6,9]))
-	rat.delete([10,30])
-	rat.inorder(rat.root)
-	print(rat.root.low,rat.root.high)
-	rat.preorder(rat.root)
+	print(rat.overlapSearch(rat.root,[-1,3]))
+	
 
 
 
