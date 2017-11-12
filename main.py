@@ -281,7 +281,6 @@ class GUI :
 		l1=[]
 		for i in x1:
 			for j in y1:
-				print(i,j)
 				if i==j:
 					l1.append(i)
 		l1.sort()
@@ -297,7 +296,6 @@ class GUI :
 		l2=[]
 		for i in x2:
 			for j in y2:
-				print(i,j)
 				if i==j:
 					l2.append(i)
 		l2.sort()
@@ -313,11 +311,7 @@ class GUI :
 		answer = self.font.render(self.Player2.text, False, (0, 255, 0))
 		self.Surface.blit(answer, (700, 100))
 		self.Player1.text = 'NO'
-		textsurface = self.font.render(str(t1), False, (0, 100, 0))
-		self.Surface.blit(textsurface, (0, 0))
 		self.Player2.text = 'NO'
-		textsurface = self.font.render(str(t2), False, (0, 100, 0))
-		self.Surface.blit(textsurface, (0, 0))
 
 	
 def main() :
@@ -334,17 +328,6 @@ def main() :
 		ty.insert(ty.root,ITNode(j[0], j[1],j[2]))
 	tx.updateMax(tx.root)
 	ty.updateMax(ty.root)
-	tx.inorder(tx.root)
-	print(tx.root.low,tx.root.high)
-	tx.preorder(tx.root)
-	ty.inorder(ty.root)
-
-	print(ty.root.low,ty.root.high)
-
-	ty.preorder(ty.root)
-
-	# l = t.overlapSearch(t.root,[1,100])
-	# print l
 
 
 	while True :
