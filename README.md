@@ -19,4 +19,4 @@ python main.py
 * [Nihar Chitnis](https://github.com/ni-chi), 16IT232
 * [Shreyas Shankar](https://github.com/shrey920), 16IT138
 * [Siddhant Waghjale](https://github.com/siddhantwaghjale), 16IT148
-* [Ritvik Arya](https://github.com/ritvikz), 16IT133
+* [Ritvik Arya](https://github.com/rtvkiz), 16IT133
