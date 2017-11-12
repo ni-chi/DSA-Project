@@ -4,7 +4,8 @@ import pygame
 
 
 class ITNode:
-	def __init__(self,a,b):
+	def __init__(self,a,b,n):
+		self.label=n
 		self.parent=None
 		self.low = a
 		self.high = b
@@ -57,15 +58,14 @@ class IntervalTree:
 		return False
 
 
-	def overlapSearch(self,root, i) :
+	def overlapSearch(self,root, i,o) :
 		if root == None :
-			return None
+			return
 		if self.doOverlap([root.low,root.high],i) :
-			return [root.low,root.high]
-		if root.leftChild != None and root.leftChild.max >= i[0] :
-			return self.overlapSearch(root.leftChild, i)
-
-		return self.overlapSearch(root.rightChild,i)
+			o.append(root.label)
+		self.overlapSearch(root.leftChild, i,o)
+		self.overlapSearch(root.rightChild,i,o)
+		return o
 
 	def height(self,z):
 		hl=hr=0
@@ -250,9 +250,9 @@ class GUI :
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
 		pygame.init()
 		self.Player.rect.center = self.Surface.get_rect().center
-
-	def loop(self) :
 		self.font = pygame.font.SysFont('Comic Sans MS', 30)
+
+	def loop(self, tx,ty) :
 		self.Player.game_event_loop(self.Player)
 		self.Surface.fill(self.white)
 		rect = pygame.Rect(200, 150, 100, 50)
@@ -264,8 +264,21 @@ class GUI :
 		topleft = rect.topleft
 		topright = rect.topright
 		t = self.Player.update(self.Surface)
+		
+		# x=[]
+		# y=[]
+		x=tx.overlapSearch(tx.root,[t[0][0],t[1][0]],[])
+		y=ty.overlapSearch(ty.root,[t[0][1],t[1][1]],[])
+		for i in x:
+			for j in y:
+				if i==j:
+					self.Player.text='YES'
+				else:
+					self.Player.text='NO'
+		
 		answer = self.font.render(self.Player.text, False, (0, 255, 0))
 		self.Surface.blit(answer, (500, 100))
+		self.Player.text = 'NO'
 		textsurface = self.font.render(str(t) + str(bottomleft) + str(bottomright) + str(topleft) + str(topright), False, (0, 0, 0))
 		self.Surface.blit(textsurface, (0, 0))
 
@@ -275,19 +288,29 @@ def main() :
 	pg = GUI()
 	pg.initial()
 
-	e = [[15, 20], [10, 30], [17, 19],[5, 20], [12, 15], [30, 40],[4,10],[2,6]]
-	rat = IntervalTree()
-	for j in e :
-		rat.insert(rat.root,ITNode(j[0], j[1]))
-	rat.updateMax(rat.root)
-	rat.inorder(rat.root)
-	print(rat.root.low,rat.root.high)
-	rat.preorder(rat.root)
-	print(rat.overlapSearch(rat.root,[-1,3]))
+	ex = [[200, 300]]
+	ey=[[150,200]]
+	tx = IntervalTree()
+	ty = IntervalTree()
+	for j in ex:
+		tx.insert(tx.root,ITNode(j[0], j[1],'A'))
+	for j in ey:
+		ty.insert(ty.root,ITNode(j[0], j[1],'A'))
+	tx.updateMax(tx.root)
+	ty.updateMax(ty.root)
+	tx.inorder(tx.root)
+	ty.inorder(ty.root)
+	print(tx.root.low,tx.root.high)
+	print(ty.root.low,ty.root.high)
+	tx.preorder(tx.root)
+	ty.preorder(ty.root)
+
+	# l = t.overlapSearch(t.root,[1,100])
+	# print l
 
 
 	while True :
-		pg.loop()
+		pg.loop(tx,ty)
 		pygame.display.update()
 		pg.MyClock.tick(60)
 

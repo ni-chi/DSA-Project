@@ -14,7 +14,7 @@ class Character :
 			self.rect.center = pygame.mouse.get_pos()
 		x = self.rect.topleft
 		y = self.rect.bottomleft
-		a = [x, y]
+		a = [list(x), list(y)]
 		surface.blit(self.image, self.rect)
 		return a
 
