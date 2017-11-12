@@ -241,7 +241,8 @@ class GUI :
 	def __init__(self) :
 		self.white = (255, 255, 255)
 		self.blue = (0, 0, 255)
-		self.Player = Character((0, 0, 3, 150))
+		self.Player1 = Character((0, 0, 3, 150))
+		self.Player2 = Character((0, 0, 150, 3))
 		self.Surface = pygame.display.set_mode((1000, 600))
 		self.MyClock = pygame.time.Clock()
 
@@ -249,47 +250,65 @@ class GUI :
 	def initial(self) :
 		os.environ['SDL_VIDEO_CENTERED'] = '1'
 		pygame.init()
-		self.Player.rect.center = self.Surface.get_rect().center
+		self.Player1.rect.center = self.Surface.get_rect().center
+		self.Player2.rect.center = self.Surface.get_rect().center
 		self.font = pygame.font.SysFont('Comic Sans MS', 30)
 
 	def loop(self, tx,ty) :
-		self.Player.game_event_loop(self.Player)
+		self.Player2.game_event_loop(self.Player2, self.Player1)
 		self.Surface.fill(self.white)
 		rect = pygame.Rect(200, 150, 100, 50)
 		image = pygame.Surface(rect.size)
 		image.fill((0, 0, 255))
 		self.Surface.blit(image, rect)
-		bottomleft = rect.bottomleft
-		bottomright = rect.bottomright
-		topleft = rect.topleft
-		topright = rect.topright
-		t = self.Player.update(self.Surface)
+		rect = pygame.Rect(400, 150, 100, 50) #(x coordinate, y coordinate, x size, y size)
+		image = pygame.Surface(rect.size)
+		image.fill((0, 255, 255))
+		self.Surface.blit(image, rect)
+		rect = pygame.Rect(400, 250, 100, 50) #(x coordinate, y coordinate, x size, y size)
+		image = pygame.Surface(rect.size)
+		image.fill((255, 255, 0))
+		self.Surface.blit(image, rect)
+		rect = pygame.Rect(200, 250, 100, 50) #(x coordinate, y coordinate, x size, y size)
+		image = pygame.Surface(rect.size)
+		image.fill((0, 255, 0))
+		self.Surface.blit(image, rect)
+		t1 = self.Player1.update(self.Surface)
+		t2 = self.Player2.update(self.Surface)
 		
 		# x=[]
 		# y=[]
-		x=tx.overlapSearch(tx.root,[t[0][0],t[1][0]],[])
-		y=ty.overlapSearch(ty.root,[t[0][1],t[1][1]],[])
+		x=tx.overlapSearch(tx.root,[t1[0][0],t1[1][0]],[])
+		y=ty.overlapSearch(ty.root,[t1[0][1],t1[1][1]],[])
 		for i in x:
 			for j in y:
 				if i==j:
-					self.Player.text='YES'
+					self.Player1.text='YES'
 				else:
-					self.Player.text='NO'
+					self.Player1.text='NO'
+
+		x=tx.overlapSearch(tx.root,[t2[0][0],t2[1][0]],[])
+		y=ty.overlapSearch(ty.root,[t2[0][1],t2[1][1]],[])
+		for i in x:
+			for j in y:
+				if i==j:
+					self.Player1.text='YES'
+				else:
+					self.Player1.text='NO'
 		
-		answer = self.font.render(self.Player.text, False, (0, 255, 0))
+		answer = self.font.render(self.Player1.text, False, (0, 255, 0))
 		self.Surface.blit(answer, (500, 100))
-		self.Player.text = 'NO'
-		textsurface = self.font.render(str(t) + str(bottomleft) + str(bottomright) + str(topleft) + str(topright), False, (0, 0, 0))
+		self.Player1.text = 'NO'
+		textsurface = self.font.render(str(t2), False, (0, 100, 0))
 		self.Surface.blit(textsurface, (0, 0))
 
 	
 def main() :
-
 	pg = GUI()
 	pg.initial()
 
-	ex = [[200, 300]]
-	ey=[[150,200]]
+	ex = [[200, 300], [400, 500]]
+	ey=[[150,200], [250, 300]]
 	tx = IntervalTree()
 	ty = IntervalTree()
 	for j in ex:

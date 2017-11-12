@@ -13,21 +13,25 @@ class Character :
 		if self.click :
 			self.rect.center = pygame.mouse.get_pos()
 		x = self.rect.topleft
-		y = self.rect.bottomleft
+		y = self.rect.bottomright
 		a = [list(x), list(y)]
 		surface.blit(self.image, self.rect)
 		return a
 
-	def game_event_loop(self, Player) :
+	def game_event_loop(self, Player1, Player2) :
 		for event in pygame.event.get() :
 			if event.type == pygame.MOUSEBUTTONDOWN :
-				if Player.rect.collidepoint(event.pos) :
-					Player.click = True
+				if Player1.rect.collidepoint(event.pos) :
+					Player1.click = True
+				if Player2.rect.collidepoint(event.pos) :
+					Player2.click = True
 			elif event.type == pygame.MOUSEBUTTONUP :
-				Player.click == False
+				Player1.click = False
+				Player2.click = False
 			elif event.type == pygame.QUIT or event.type == pygame.K_ESCAPE :
 				pygame.quit()
 				sys.exit()
+
 
 def main() :
 	os.environ['SDL_VIDEO_CENTERED'] = '1'
