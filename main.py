@@ -225,7 +225,7 @@ class IntervalTree:
 			return root
 
 		self.inorder(root.leftChild)
-		print("[" + str(root.low) + ", " + str(root.high) + "]" + "max = " + str(root.max))
+		print("[" + str(root.low) + ", " + str(root.high)+","+root.label + "]" + "max = " + str(root.max))
 		self.inorder(root.rightChild)
 
 	def preorder(self,root) :
@@ -241,7 +241,7 @@ class GUI :
 	def __init__(self) :
 		self.white = (255, 255, 255)
 		self.blue = (0, 0, 255)
-		self.Player1 = Character((0, 0, 3, 150))
+		self.Player1 = Character((0, 0, 3, 100))
 		self.Player2 = Character((0, 0, 150, 3))
 		self.Surface = pygame.display.set_mode((1000, 600))
 		self.MyClock = pygame.time.Clock()
@@ -257,48 +257,65 @@ class GUI :
 	def loop(self, tx,ty) :
 		self.Player2.game_event_loop(self.Player2, self.Player1)
 		self.Surface.fill(self.white)
-		rect = pygame.Rect(200, 150, 100, 50)
+		rect = pygame.Rect(200, 150, 100, 50)#(Rect A)
 		image = pygame.Surface(rect.size)
 		image.fill((0, 0, 255))
 		self.Surface.blit(image, rect)
-		rect = pygame.Rect(400, 150, 100, 50) #(x coordinate, y coordinate, x size, y size)
+		rect = pygame.Rect(400, 150, 100, 50) #(B:x coordinate, y coordinate, x size, y size)
 		image = pygame.Surface(rect.size)
 		image.fill((0, 255, 255))
 		self.Surface.blit(image, rect)
-		rect = pygame.Rect(400, 250, 100, 50) #(x coordinate, y coordinate, x size, y size)
+		rect = pygame.Rect(400, 250, 100, 50) #(C:x coordinate, y coordinate, x size, y size)
 		image = pygame.Surface(rect.size)
 		image.fill((255, 255, 0))
 		self.Surface.blit(image, rect)
-		rect = pygame.Rect(200, 250, 100, 50) #(x coordinate, y coordinate, x size, y size)
+		rect = pygame.Rect(200, 250, 100, 50) #(D:x coordinate, y coordinate, x size, y size)
 		image = pygame.Surface(rect.size)
 		image.fill((0, 255, 0))
 		self.Surface.blit(image, rect)
 		t1 = self.Player1.update(self.Surface)
 		t2 = self.Player2.update(self.Surface)
 		
-		# x=[]
-		# y=[]
-		x=tx.overlapSearch(tx.root,[t1[0][0],t1[1][0]],[])
-		y=ty.overlapSearch(ty.root,[t1[0][1],t1[1][1]],[])
-		for i in x:
-			for j in y:
+		x1=tx.overlapSearch(tx.root,[t1[0][0],t1[1][0]],[])
+		y1=ty.overlapSearch(ty.root,[t1[0][1],t1[1][1]],[])
+		l1=[]
+		for i in x1:
+			for j in y1:
+				print(i,j)
 				if i==j:
-					self.Player1.text='YES'
-				else:
-					self.Player1.text='NO'
-
-		x=tx.overlapSearch(tx.root,[t2[0][0],t2[1][0]],[])
-		y=ty.overlapSearch(ty.root,[t2[0][1],t2[1][1]],[])
-		for i in x:
-			for j in y:
+					l1.append(i)
+		l1.sort()
+		if len(l1)==0:
+			self.Player1.text='NO'
+		elif len(l1)==1:
+			self.Player1.text='In city ' + str(l1)
+		else:
+			self.Player1.text='Connects cities ' + str(l1)
+				
+		x2=tx.overlapSearch(tx.root,[t2[0][0],t2[1][0]],[])
+		y2=ty.overlapSearch(ty.root,[t2[0][1],t2[1][1]],[])
+		l2=[]
+		for i in x2:
+			for j in y2:
+				print(i,j)
 				if i==j:
-					self.Player1.text='YES'
-				else:
-					self.Player1.text='NO'
+					l2.append(i)
+		l2.sort()
+		if len(l2)==0:
+			self.Player2.text='NO'
+		elif len(l2)==1:
+			self.Player2.text='In city ' + str(l2)
+		else:
+			self.Player2.text='Connects cities ' + str(l2)
 		
 		answer = self.font.render(self.Player1.text, False, (0, 255, 0))
-		self.Surface.blit(answer, (500, 100))
+		self.Surface.blit(answer, (300, 100))
+		answer = self.font.render(self.Player2.text, False, (0, 255, 0))
+		self.Surface.blit(answer, (700, 100))
 		self.Player1.text = 'NO'
+		textsurface = self.font.render(str(t1), False, (0, 100, 0))
+		self.Surface.blit(textsurface, (0, 0))
+		self.Player2.text = 'NO'
 		textsurface = self.font.render(str(t2), False, (0, 100, 0))
 		self.Surface.blit(textsurface, (0, 0))
 
@@ -307,21 +324,23 @@ def main() :
 	pg = GUI()
 	pg.initial()
 
-	ex = [[200, 300], [400, 500]]
-	ey=[[150,200], [250, 300]]
+	ex = [[200, 300,'A'], [400, 500,'B'],[400,500,'C'],[200,300,'D']]
+	ey=[[150,200,'A'], [150,200,'B'],[250,300,'C'],[250,300,'D']]
 	tx = IntervalTree()
 	ty = IntervalTree()
 	for j in ex:
-		tx.insert(tx.root,ITNode(j[0], j[1],'A'))
+		tx.insert(tx.root,ITNode(j[0], j[1],j[2]))
 	for j in ey:
-		ty.insert(ty.root,ITNode(j[0], j[1],'A'))
+		ty.insert(ty.root,ITNode(j[0], j[1],j[2]))
 	tx.updateMax(tx.root)
 	ty.updateMax(ty.root)
 	tx.inorder(tx.root)
-	ty.inorder(ty.root)
 	print(tx.root.low,tx.root.high)
-	print(ty.root.low,ty.root.high)
 	tx.preorder(tx.root)
+	ty.inorder(ty.root)
+
+	print(ty.root.low,ty.root.high)
+
 	ty.preorder(ty.root)
 
 	# l = t.overlapSearch(t.root,[1,100])
