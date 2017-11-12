@@ -12,6 +12,7 @@ class IntervalTree:
 
 	def __init__(self):
 		self.root=None
+		self.o=[]
 
 
 	def search(self,x,i):
@@ -54,13 +55,12 @@ class IntervalTree:
 
 	def overlapSearch(self,root, i) :
 		if root == None :
-			return None
+			return
 		if self.doOverlap([root.low,root.high],i) :
-			return [root.low,root.high]
-		if root.leftChild != None and root.leftChild.max >= i[0] :
-			return self.overlapSearch(root.leftChild, i)
-
-		return self.overlapSearch(root.rightChild,i)
+			self.o.append([root.low,root.high])
+		self.overlapSearch(root.leftChild, i)
+		self.overlapSearch(root.rightChild,i)
+		return self.o
 
 	def height(self,z):
 		hl=hr=0
@@ -246,7 +246,7 @@ def main():
 	rat.inorder(rat.root)
 	print(rat.root.low,rat.root.high)
 	rat.preorder(rat.root)
-	print(rat.overlapSearch(rat.root,[-1,3]))
+	print(rat.overlapSearch(rat.root,[1,100]))
 	
 
 
