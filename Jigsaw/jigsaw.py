@@ -1,4 +1,5 @@
 import pygame, sys
+from p1 import ITNode,IntervalTree
 
 class Character :
 	def __init__(self, img) :
@@ -11,7 +12,7 @@ class Character :
 		if self.click :
 			self.rect.center = pygame.mouse.get_pos()
 		surface.blit(self.image, self.rect)
-		return [self.rect.topleft, self.rect.bottomright]
+		return [list(self.rect.topleft), list(self.rect.bottomright)]
 
 	def game_event_loop(self, Player1) :
 		for event in pygame.event.get() :
@@ -28,6 +29,15 @@ class Character :
 
 
 def main() :
+	c=[['A','D','G'],['B','E','H'],['C','F','I']]
+	ex = [[300, 484,0], [484, 668,1],[668,852,2]]
+	ey = [[100, 244,0], [244, 388,1],[388,532,2]]
+	tx = IntervalTree()
+	ty = IntervalTree()
+	for j in ex:
+		tx.insert(tx.root,ITNode(j))
+	for j in ey:
+		ty.insert(ty.root,ITNode(j))
 	pygame.init()
 	font = pygame.font.SysFont('Comic Sans MS', 30)
 	Surface = pygame.display.set_mode((1000, 600))
@@ -40,10 +50,14 @@ def main() :
 	while True :
 		white = (255, 255, 255)
 		blue = (0, 0, 255)
-		Surface.fill(white)
+		Surface.fill((0,0,0))
+		pygame.draw.rect(Surface, (255, 0, 0), (300, 100, 552, 432))
 		for i in range(1, 10) :
 			Player[i].game_event_loop(Player)
 			t = Player[i].update(Surface)
+			x1=tx.overlapSearch(tx.root,[t[0][0],t[1][0]])
+			y1=ty.overlapSearch(ty.root,[t[0][1],t[1][1]])
+			print(x1,y1)
 			textsurface = font.render(str(t), False, (0, 0, 0))
 			Surface.blit(textsurface, (0, i*50))
 		pygame.display.update()
