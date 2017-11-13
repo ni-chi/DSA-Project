@@ -248,7 +248,6 @@ class GUI :
 
 
 	def initial(self) :
-		os.environ['SDL_VIDEO_CENTERED'] = '1'
 		pygame.init()
 		self.Player1.rect.center = self.Surface.get_rect().center
 		self.Player2.rect.center = self.Surface.get_rect().center
@@ -261,18 +260,26 @@ class GUI :
 		image = pygame.Surface(rect.size)
 		image.fill((0, 0, 255))
 		self.Surface.blit(image, rect)
+		city = self.font.render('A', False, (0, 0, 0))
+		self.Surface.blit(city, (250, 175))
 		rect = pygame.Rect(400, 150, 100, 50) #(B:x coordinate, y coordinate, x size, y size)
 		image = pygame.Surface(rect.size)
 		image.fill((0, 255, 255))
 		self.Surface.blit(image, rect)
+		city = self.font.render('B', False, (0, 0, 0))
+		self.Surface.blit(city, (450, 175))
 		rect = pygame.Rect(400, 250, 100, 50) #(C:x coordinate, y coordinate, x size, y size)
 		image = pygame.Surface(rect.size)
 		image.fill((255, 255, 0))
 		self.Surface.blit(image, rect)
+		city = self.font.render('C', False, (0, 0, 0))
+		self.Surface.blit(city, (450, 275))
 		rect = pygame.Rect(200, 250, 100, 50) #(D:x coordinate, y coordinate, x size, y size)
 		image = pygame.Surface(rect.size)
 		image.fill((0, 255, 0))
 		self.Surface.blit(image, rect)
+		city = self.font.render('D', False, (0, 0, 0))
+		self.Surface.blit(city, (250, 275))
 		t1 = self.Player1.update(self.Surface)
 		t2 = self.Player2.update(self.Surface)
 		
