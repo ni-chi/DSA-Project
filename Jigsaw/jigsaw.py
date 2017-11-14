@@ -17,12 +17,14 @@ class Character :
 	def game_event_loop(self, Player1) :
 		for event in pygame.event.get() :
 			if event.type == pygame.MOUSEBUTTONDOWN :
-				for i in range(1, 10) :
-					if Player1[i].rect.collidepoint(event.pos) :
-						Player1[i].click = True
+				for i in range(0, 3) :
+					for j in range(0,3):
+						if Player1[i][j].rect.collidepoint(event.pos) :
+							Player1[i][j].click = True
 			elif event.type == pygame.MOUSEBUTTONUP :
-				for i in range(1, 10) :	
-					Player1[i].click = False
+				for i in range(0, 3) :
+					for j in range(0, 3) :	
+						Player1[i][j].click = False
 			elif event.type == pygame.QUIT or event.type == pygame.K_ESCAPE :
 				pygame.quit()
 				sys.exit()
@@ -30,8 +32,10 @@ class Character :
 
 def main() :
 	c=[['A','D','G'],['B','E','H'],['C','F','I']]
-	ex = [[300, 484,0], [484, 668,1],[668,852,2]]
-	ey = [[100, 244,0], [244, 388,1],[388,532,2]]
+	T=[[False for i in range(3)] for i in range (3)]
+	S=[[True for i in range(3)] for i in range (3)]
+	ex = [[300, 484,0], [486, 668,1],[670,852,2]]
+	ey = [[100, 244,0], [246, 388,1],[390,532,2]]
 	tx = IntervalTree()
 	ty = IntervalTree()
 	for j in ex:
@@ -39,27 +43,38 @@ def main() :
 	for j in ey:
 		ty.insert(ty.root,ITNode(j))
 	pygame.init()
-	font = pygame.font.SysFont('Comic Sans MS', 30)
+	font = pygame.font.SysFont('Impact', 30)
 	Surface = pygame.display.set_mode((1000, 600))
 	MyClock = pygame.time.Clock()
-	Player = [None]
-	for i in range(1, 10) :
-		Player.insert(i, Character('jerry-' + str(i) + '.jpeg'))
-		(x, y) = Surface.get_rect().topleft
-		Player[i].rect.center = (x + i*100, y + i*50)
+	Player = [[None for i in range(3)] for i in range (3)]
+	i=1
+	for j in range(0,3) :
+		for k in range(0,3):
+			Player[k][j]=(Character('jerry-' + str(i) + '.jpeg'))
+			(x, y) = Surface.get_rect().topleft
+			Player[k][j].rect.center = (x + i*100, y + i*50)
+			i=i+1
 	while True :
-		white = (255, 255, 255)
-		blue = (0, 0, 255)
-		Surface.fill((0,0,0))
-		pygame.draw.rect(Surface, (255, 0, 0), (300, 100, 552, 432))
-		for i in range(1, 10) :
-			Player[i].game_event_loop(Player)
-			t = Player[i].update(Surface)
-			x1=tx.overlapSearch(tx.root,[t[0][0],t[1][0]])
-			y1=ty.overlapSearch(ty.root,[t[0][1],t[1][1]])
-			print(x1,y1)
-			textsurface = font.render(str(t), False, (0, 0, 0))
-			Surface.blit(textsurface, (0, i*50))
+		Surface.fill((127,255,255))
+		pygame.draw.rect(Surface, (255, 250, 205), (300, 100, 552, 432))
+		pygame.draw.rect(Surface, (0, 0, 0), (484,100, 2, 432))
+		pygame.draw.rect(Surface, (0, 0, 0), (668, 100, 2, 432))
+		pygame.draw.rect(Surface, (0, 0, 0), (300, 244, 552, 2))
+		pygame.draw.rect(Surface, (0, 0, 0), (300, 388, 552, 2))
+		for i in range(0, 3) :
+			for j in range(0,3):
+				Player[i][j].game_event_loop(Player)
+				t = Player[i][j].update(Surface)
+				x=tx.overlapSearch(tx.root,[t[0][0],t[1][0]])
+				y=ty.overlapSearch(ty.root,[t[0][1],t[1][1]])
+				if x==i and y==j:
+					T[i][j]=True
+				else:
+					T[i][j]=False
+				print(T)
+				if T==S:
+					textsurface = font.render(str("Puzzle Solved!"), False, (0, 0, 0))
+					Surface.blit(textsurface, (500 ,100 ))
 		pygame.display.update()
 		MyClock.tick(60)
 
